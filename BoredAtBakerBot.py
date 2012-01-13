@@ -21,10 +21,11 @@ class BoredAtBakerBot:
         self.br.submit()
     
     def feed(self):
-        feed = []
+        self.br.open(self.baseURL)
         html = self.br.response().read()
         soup = BeautifulSoup(html)
 
+        feed = []
         for post in soup.findAll('div', 'post'):
             content = post.find('span', 'post_text')
             if content: feed.append((post['id'], content.renderContents()))
@@ -32,12 +33,19 @@ class BoredAtBakerBot:
         return feed
     
     def post(self, message):
+        self.br.open(self.baseURL)
         self.br.select_form(nr=1)
-        print self.br.form
         self.br["post_text"] = message
         self.br.submit()
+    
+    def checkin(self, id):
+        self.br.open(self.baseURL + "/actions/checkin_location.php?lid=" + str(id))
+        html = self.br.response().read()
+        if html.find('<div id="msg" class="grid_12 error center">You\'ve already checked-in recently! Try again later :)</div>') >= 0:
+            print "YOU'VE ALREADY CHECKED IN RECENTLY!!"
+        
                 
 # Enter username and password:
 testBot = BoredAtBakerBot("eleazor", "qweasd")
-print testBot.feed()
-testBot.post("I'm BORED AT HACKER CLUB!")
+testBot.checkin(178) # Check into AD
+testBot.post("Unsteamy Nonhookup @ later")
