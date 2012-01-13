@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import urllib, urllib2, re, mechanize
+import random, urllib, urllib2, re, mechanize
 from BeautifulSoup import BeautifulSoup
 
 class BoredAtBakerBot:
@@ -41,11 +41,13 @@ class BoredAtBakerBot:
     def checkin(self, id):
         self.br.open(self.baseURL + "/actions/checkin_location.php?lid=" + str(id))
         html = self.br.response().read()
-        if html.find('<div id="msg" class="grid_12 error center">You\'ve already checked-in recently! Try again later :)</div>') >= 0:
-            print "YOU'VE ALREADY CHECKED IN RECENTLY!!"
-        
-                
+        return html.find('<div id="msg" class="grid_12 error center">You\'ve already checked-in recently! Try again later :)</div>') == -1
+                                
 # Enter username and password:
 testBot = BoredAtBakerBot("eleazor", "qweasd")
 testBot.checkin(178) # Check into AD
-testBot.post("Unsteamy Nonhookup @ later")
+
+for i in range(1, 20):
+    adjective = random.choice(list(open('adjectives.txt'))).strip()
+    testBot.post(adjective.upper() + " HOOKUP @ NOW")
+    print i
